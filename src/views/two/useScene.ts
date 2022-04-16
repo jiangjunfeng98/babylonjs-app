@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { Engine, Scene, Vector3, MeshBuilder, StandardMaterial, Color3, HemisphericLight, ArcRotateCamera } from "@babylonjs/core";
+import { Engine, Scene, Vector3, MeshBuilder, StandardMaterial, Color3, HemisphericLight, ArcRotateCamera, Sound } from "@babylonjs/core";
 
 const useScene = () => {
 
@@ -19,18 +19,23 @@ const useScene = () => {
     const scene = new Scene(engine);
 
     // 弧度旋转相机
-    const camera = new ArcRotateCamera('camera', 0, 0, 10, Vector3.Zero(), scene);
-    camera.setTarget(Vector3.Zero());
+    const camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 2.5, 15, new Vector3(0, 0, 0), scene);
     camera.attachControl(bjsCanvas.value, true);
-    // camera.attachControl(true);
 
-    new HemisphericLight("light", Vector3.Up(), scene);
+    new HemisphericLight("light", new Vector3(1, 1, 0), scene);
 
     const box = MeshBuilder.CreateBox("box", { width: 3, height: 3, depth: 3 }, scene);
-    const material = new StandardMaterial("box-material", scene);
+    // 创建地面
+    const ground = MeshBuilder.CreateGround("ground", { width: 10, height: 10 });
+    // 设置 box 和地面的位置，默认为 0.5
+    box.position.y = 1;
+    // 添加声音或者音乐
+    const sound = new Sound("name", "mp3/11.wav", scene, null, { loop: true, autoplay: true });
+    sound.play();
+    // const material = new StandardMaterial("box-material", scene);
 
-    material.diffuseColor = Color3.Blue();
-    box.material = material;
+    // material.diffuseColor = Color3.Blue();
+    // box.material = material;
 
     engine.runRenderLoop(() => {
       scene.render();
